@@ -201,57 +201,69 @@ int listed[100000000];
 
 int main() {
     struct Node *root = NULL;
-    int n;
-    n = 5000;
+    int n, i;
+    n = 20000;
     int itter = 0;
     //data(n);
 
 
+
     while(itter<15){
         
-        int i = 0;
-        srand(time(0));
+        i = 0;
+        int z, noReturns = 20;
+        double t = 0, t2 = 0, t3 = 0;
 
-        clock_t start = clock();
-        for (i=0; i<n; i++) {
-            int id = 1000000 + i;
-            root = insertNode(root, id);
-            listed[i] = id;
+        for (z = 0; z<noReturns;z++) {
+          srand(time(0));
+          clock_t start = clock();
+          for (i=0; i<n; i++) {
+              //int id = 1000000 + i;
+              int a;
+              a = rand()%1000;
+              int id = 1000000 +itter*5000 + a;
+              root = insertNode(root, id);
+              listed[i] = id;
+          }
+
+          clock_t end = clock();
+          //float t;
+          t += (end-start)*1000/CLOCKS_PER_SEC;
+          //printf("\n%f %d   ", t, n);
+
+          clock_t start2 = clock();
+          for (i=0; i<n; i++) {
+            root = deleteNode(root, listed[i]);
+          }
+
+          clock_t end2 = clock();
+          //float t2;
+          t2 += (end2-start2)*1000/CLOCKS_PER_SEC;
+          //printf("%f %d\n", t2, n);
+
+
+
+          // srand(time(0));
+          // clock_t start3 = clock();
+          // for (i=0; i<n*500; i++){
+          //     //int chosen = rand()%n+1;
+          //     //root = deleteNode(root, listed[i]);
+          //     //printf("%d  ", listed[chosen]);
+          //     root = search(root, listed[i%n]);
+
+          // }
+
+          // clock_t end3 = clock();
+          // float t;
+          // t3 += (end3-start3)*1000/CLOCKS_PER_SEC;
+          // // printf("\n\n%f %d\n", t, n);
         }
-
-        clock_t end = clock();
-        float t;
-        t = (end-start)*1000/CLOCKS_PER_SEC;
-        printf("\n\n%f %d   ", t, n);
-
-        clock_t start2 = clock();
-        for (i=0; i<n; i++) {
-          root = deleteNode(root, listed[i]);
-        }
-
-        clock_t end2 = clock();
-        float t2;
-        t2 = (end2-start2)*1000/CLOCKS_PER_SEC;
-        printf("%f %d\n", t2, n);
-
-
-
-
-        // clock_t start = clock();
-        // for (i=0; i<n; i++){
-        //     //int chosen = rand()%n+1;
-        //     //root = deleteNode(root, listed[i]);
-        //     //printf("%d  ", listed[chosen]);
-        //     root = search(root, listed[i]);
-
-        // }
-
-        // clock_t end = clock();
-        // float t;
-        // t = (end-start);
-        // printf("\n\n%f %d\n", t, n);
-
-        n+=5000;
+        printf("%d ", n);
+        printf("%f ", t/noReturns);
+        printf("%f ", t2/noReturns);
+        //printf("%f ", t3/noReturns/500);
+        printf("\n");
+        n+=20000;
         itter++;
 
     }    

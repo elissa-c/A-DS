@@ -111,40 +111,72 @@ int main()
     struct node *root = NULL;
     
     int n;
-    n = 10000;
+    n = 20000;
     int itter = 0;
     //data(n);
     int i = 0;
-     //srand(time(0));
-    for (i=0; i<n; i++) {
-        int id = 1000000 + i;
-        root = insert(root, id);
-        listed[i] = id;
-        //printf("%d", id);
-    }
+
 
 
     while(itter<15){
         
-        clock_t start = clock();
-        for (i=0; i<n*100; i++){
-            int chosen = rand()%n+1;
-            //root = delete(root, listed[chosen]);
-            //printf("%d  ", listed[chosen]);
-            root = search(root, listed[chosen]);
+        i = 0;
+        
+        int z, noReturns = 10;
+        float t = 0, t2 = 0, t3 = 0;
 
+        for (z = 0; z<noReturns;z++) {
+            srand(time(0));
+           clock_t start = clock();
+          for (i=0; i<n; i++) {
+              //int id = 1000000 + i;
+              int a;
+              a = rand()%1000;
+              int id = 1000000 +itter*5000 + a;
+              root = insert(root, id);
+              listed[i] = id;
+          }
+
+          clock_t end = clock();
+          //float t;
+          t += (end-start)*1000/CLOCKS_PER_SEC;
+          //printf("\n\n%f %d   ", t, n)
+
+          clock_t start2 = clock();
+          for (i=0; i<n; i++) {
+            root = delete(root, listed[i]);
+          }
+
+          clock_t end2 = clock();
+          //float t2;
+          t2 += (end2-start2)*1000/CLOCKS_PER_SEC;
+          //printf("%f %d\n", t2, n);
+
+
+
+        //   srand(time(0));
+        //   clock_t start3 = clock();
+        //   for (i=0; i<n*200; i++){
+        //       int chosen = rand()%n+1;
+        //       //root = deleteNode(root, listed[i]);
+        //       //printf("%d  ", listed[chosen]);
+        //       root = search(root, listed[chosen]);
+
+        //   }
+
+        //   clock_t end3 = clock();
+        //   float t;
+        //   t3 += (end3-start3)*1000/CLOCKS_PER_SEC;
+        //   //printf("%f %d\n", t3, n);
         }
-
-        clock_t end = clock();
-        float t;
-        t = (end-start);
-        printf("\n\n%f %d\n", t, n*100);
-
-        n+=5000;
+        printf("%d ", n);
+        printf("%f ", t/noReturns);
+        printf("%f ", t2/noReturns);
+        //printf("%f ", t3/noReturns/200);
+        printf("\n");
+        n+=20000;
         itter++;
-        //traverse(root);
+        //printf("%d  ", itter);
+
+        }    
     }
-
-
-
-}
