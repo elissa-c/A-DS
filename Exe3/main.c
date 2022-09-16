@@ -26,12 +26,10 @@ int main(){
         clock_t end = clock();
         t += (end-start)*1000/CLOCKS_PER_SEC;
 
-        /////////////////////////////////////////////////////////
+        //
 
         int num_of_vert=count_vertices(mat);
         create_edge_list(mat);
-
-        ////
 
         clock_t start2 = clock();
 
@@ -42,8 +40,7 @@ int main(){
         clock_t end2 = clock();
         t2 += (end2-start2)*1000/CLOCKS_PER_SEC;
 
-        /////////////////////////////////////////////////////////
-        //int incidence_matrix[size][num_of_vert];
+        //
         
 
         inci_mat_from_edge(edge_list, num_of_vert, incidence_matrix);
@@ -57,7 +54,7 @@ int main(){
         clock_t end3 = clock();
         t3 += (end3-start3)*1000/CLOCKS_PER_SEC;
 
-        //////////////////////////////////////////////////////////////////
+        //
 
         create_inci_list(mat);
 

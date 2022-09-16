@@ -37,4 +37,4 @@ int il_edge_existence(struct Node node_list[], int num_of_vert){
     return 0;
 }
 
-#endif // INCI_LIST_H_INCLUDED
+#endif

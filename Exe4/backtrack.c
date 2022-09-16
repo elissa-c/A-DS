@@ -1,99 +1,287 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <time.h>
 #include <windows.h>
-#include "create_graph.h"
-#define V 20
+//#include "AdjecList.h"
 
-void printSolution(int path[]);
 
-bool isSafe(int v, int graph[V][V], int path[], int pos)
+typedef struct AdjacencyListItem
 {
-    
-    if (graph [ path[pos-1] ][ v ] == 0)
-        return false;
+    int j;
+    struct AdjacencyListItem *next;
+} ALI;
 
-    for (int i = 0; i < pos; i++)
-        if (path[i] == v)
-            return false;
+ALI **AdjacencyList;
+int AdjacencyListCount;
 
-    return true;
+void addALEdge(int i, int j);
+
+void initAList(int n)
+{
+    int i, j;
+
+    AdjacencyList = (ALI **)calloc(n, sizeof(ALI *));
+    AdjacencyListCount = n;
+    for (int z=0; z<n; z++) {
+        AdjacencyList[z] = 0;
+    }
 }
-bool hamCycleUtil(int graph[V][V], int path[], int pos)
+
+void addALEdge(int i, int j)
 {
-    if (pos == V)
+    if (AdjacencyList == NULL)
+        return;
+
+    ALI *newEdge = (ALI *)calloc(1, sizeof(ALI));
+
+    newEdge->j = j;
+
+    if (AdjacencyList[i] == 0)
     {
-        if ( graph[ path[pos-1] ][ path[0] ] == 1 )
-           return true;
-        else
-          return false;
+        AdjacencyList[i] = newEdge;
+        return;
     }
 
-    for (int v = 1; v < V; v++)
+    ALI *current = AdjacencyList[i];
+
+    while (current->next != NULL)
     {
-        if (isSafe(v, graph, path, pos))
+        current = current->next;
+    }
+
+    current->next = newEdge;
+
+    return;
+}
+
+void freeAdjacencyList()
+{
+    if (AdjacencyList == NULL)
+        return;
+
+    int i;
+
+    for (i = 0; i < AdjacencyListCount; i++)
+    {
+        ALI *current = AdjacencyList[i], *prev;
+
+        while (current != NULL)
         {
-            path[pos] = v;
-
-            if (hamCycleUtil (graph, path, pos+1) == true)
-                return true;
-
-            path[pos] = -1;
+            prev = current;
+            current = prev->next;
+            free(prev);
         }
     }
-        return false;
+
+    free(AdjacencyList);
 }
 
-bool hamCycle(int graph[V][V])
+uint8_t checkALEdge(int i, int j)
 {
-    //int V;
-    int *path;
-    for (int i = 0; i < V; i++)
+    ALI *current;
+
+    current = AdjacencyList[i];
+
+    while (current != NULL)
+    {
+        if (current->j == j)
+            return 1;
+
+        current = current->next;
+    }
+
+    return 0;
+}
+
+void removeALEdge(int i, int j)
+{
+    if (AdjacencyList == NULL)
+        return;
+
+    if (AdjacencyList[i] == NULL)
+        return;
+
+    ALI *current = AdjacencyList[i], *prev;
+
+    if (current->j == j)
+    {
+        current->j = -1;
+        return;
+    }
+
+    while (current != NULL && current->j != j)
+    {
+        prev = current;
+        current = current->next;
+    }
+
+    if (current == NULL)
+        return;
+    
+    current->j = -1;
+    
+    return;
+}
+
+
+
+clock_t algoStart;
+
+int8_t hamiltonianCycle();
+int8_t findHamiltonianCycle(int *path, int currentPos);
+int8_t checkPathArray(int pos, int v, int *path);
+void printPath(int *path);
+
+int8_t hamiltonianCycle()
+{
+    int i, *path = (int *)malloc(sizeof(int) * AdjacencyListCount);
+
+    for (i = 0; i < AdjacencyListCount; i++)
         path[i] = -1;
 
     path[0] = 0;
-    if ( hamCycleUtil(graph, path, 1) == false )
+
+    algoStart = clock();
+
+    if (findHamiltonianCycle(path, 1) == 0)
     {
-        printf("\nSolution does not exist");
-        return false;
+        return 0;
     }
 
-    printSolution(path);
-    return true;
+    // printPath(path);
+
+    free(path);
+    return 1;
 }
 
-void printSolution(int path[])
+int8_t findHamiltonianCycle(int *path, int currentPos)
 {
-    printf ("Solution Exists:"
-            " Following is one Hamiltonian Cycle \n");
-    for (int i = 0; i < V; i++)
-        printf(" %d ", path[i]);
+    clock_t runtime = clock() - algoStart;
 
-    printf(" %d ", path[0]);
+    
+
+    if (currentPos == AdjacencyListCount)
+    {
+        if (checkALEdge(path[currentPos - 1], path[0]))
+            return 1;
+        else
+            return 0;
+    }
+
+    ALI *current = AdjacencyList[path[currentPos - 1]];
+
+    while (current != NULL)
+    {
+        if (checkPathArray(currentPos, current->j, path))
+        {
+            path[currentPos] = current->j;
+
+            if(findHamiltonianCycle(path, currentPos + 1) == 1)
+                return 1;
+
+            path[currentPos] = -1;
+        }
+        
+        current = current->next;
+    }
+    
+
+    return 0;
+}
+
+int8_t checkPathArray(int pos, int v, int *path)
+{
+    int i;
+
+    for(i = 0; i < pos; i++)
+        if(path[i] == v)
+            return 0;
+
+    return 1;
+}
+
+void printPath(int *path)
+{
+    int i;
+
+    printf("%d ", path[0]);
+
+    for (i = 1; i < AdjacencyListCount; i++)
+        printf("-> %d ", path[i]);
+
     printf("\n");
 }
 
 
-int main() {
-    int itter = 0;
-    float t=0;
-    int noReturns = 1;
 
-    while (itter<noReturns) {
-        clock_t start = clock();
-        create_undirected(mat);
-        printf("%d\n", mat[2][2]);
-        
-        bool status = hamCycle(mat);
 
-        clock_t end = clock();
-        if (status == true){
-            t += (end-start);
-            itter++;
+
+void randomGraph(int n, float sat)
+{
+    //initAList(n);
+
+    char buffer[255];
+    int i, prob;
+
+    float random = (float)rand()/RAND_MAX;
+    if (random < prob) {
+        addALEdge(i, prob);
+        addALEdge(prob, i);    
+    }
+    
+}
+
+
+
+int main()
+{
+
+    
+    int i, jp, jn = 6, noReturns = 10, avgFrom = 5, k;
+    float prob[] = {0.2, 0.3, 0.4, 0.6, 0.8, 0.95};
+
+    int *ns;
+    double *times[jn];
+    ns = (int *)calloc(noReturns, sizeof(int));
+
+    for (jp = 0; jp < jn; jp++)
+    {
+        times[jp] = (double *)calloc(noReturns, sizeof(double));
+
+        printf("\nHC for p=%f\n", prob[jp]);
+        for (i = 1; i <= noReturns; i++)
+        {
+            int n = 25 * i;
+            ns[i - 1] = n;
+            times[jp][i - 1] = 0;
+            for(k = 0; k < avgFrom; k++)
+            {
+                int i, j;
+
+                AdjacencyList = (ALI **)calloc(n, sizeof(ALI *));
+                AdjacencyListCount = n;
+                for (int z=0; z<n; z++) {
+                    AdjacencyList[z] = 0;
+                }
+                randomGraph(n, prob[jp]);
+
+
+
+                clock_t begin = clock();
+                hamiltonianCycle();
+                clock_t end = clock();
+
+                times[jp][i - 1] += (double)(end - begin) / CLOCKS_PER_SEC * 1000;
+
+                freeAdjacencyList();
+            }
+            
+            times[jp][i - 1] /= avgFrom;
+
+            printf("%d - %fms\n", n, times[jp][i - 1]);
         }
     }
-    printf("%d %f\n", size, t/noReturns);
 
-    return 0;
 }

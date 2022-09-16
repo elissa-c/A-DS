@@ -63,4 +63,5 @@ int incmat_existance(int count, int incidence_matrix[size][count]) {
     }
     return 0;
 }
-#endif // EDGE_LIST_H_INCLUDED
+
+#endif

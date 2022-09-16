@@ -5,6 +5,8 @@
 // Create Node
 struct Node {
   int key;
+  char firstName[13];
+  char lastName[13];
   struct Node *left;
   struct Node *right;
   int height;
@@ -12,7 +14,6 @@ struct Node {
 
 int max(int a, int b);
 
-// Calculate height
 int height(struct Node *N) {
   if (N == NULL)
     return 0;
@@ -23,7 +24,6 @@ int max(int a, int b) {
   return (a > b) ? a : b;
 }
 
-// Create a node
 struct Node *newNode(int key) {
   struct Node *node = (struct Node *)
     malloc(sizeof(struct Node));
@@ -34,7 +34,7 @@ struct Node *newNode(int key) {
   return (node);
 }
 
-// Right rotate
+//Right rotate
 struct Node *rightRotate(struct Node *y) {
   struct Node *x = y->left;
   struct Node *T2 = x->right;
@@ -48,7 +48,7 @@ struct Node *rightRotate(struct Node *y) {
   return x;
 }
 
-// Left rotate
+//Left rotate
 struct Node *leftRotate(struct Node *x) {
   struct Node *y = x->right;
   struct Node *T2 = y->left;
@@ -62,16 +62,14 @@ struct Node *leftRotate(struct Node *x) {
   return y;
 }
 
-// Get the balance factor
+//Balancing
 int getBalance(struct Node *N) {
   if (N == NULL)
     return 0;
   return height(N->left) - height(N->right);
 }
 
-// Insert node
 struct Node *insertNode(struct Node *node, int key) {
-  // Find the correct position to insertNode the node and insertNode it
   if (node == NULL)
     return (newNode(key));
 
@@ -82,8 +80,7 @@ struct Node *insertNode(struct Node *node, int key) {
   else
     return node;
 
-  // Update the balance factor of each node and
-  // Balance the tree
+  //Balance
   node->height = 1 + max(height(node->left),
                height(node->right));
 
@@ -116,9 +113,9 @@ struct Node *minValueNode(struct Node *node) {
   return current;
 }
 
-// Delete a nodes
+
 struct Node *deleteNode(struct Node *root, int key) {
-  // Find the node and delete it
+
   if (root == NULL)
     return root;
 
@@ -150,8 +147,7 @@ struct Node *deleteNode(struct Node *root, int key) {
   if (root == NULL)
     return root;
 
-  // Update the balance factor of each node and
-  // balance the tree
+  //BAlance
   root->height = 1 + max(height(root->left),
                height(root->right));
 
@@ -175,7 +171,7 @@ struct Node *deleteNode(struct Node *root, int key) {
   return root;
 }
 
-// Print the tree
+//print the tree
 void printPreOrder(struct Node *root) {
   if (root != NULL) {
     printf("%d ", root->key);
@@ -188,11 +184,11 @@ void printPreOrder(struct Node *root) {
 
 struct Node* search(struct Node *root, int x)
 {
-    if(root==NULL || root->key==x) //if root->data is x then the element is found
+    if(root==NULL || root->key==x)
         return root;
-    else if(x>root->key) // x is greater, so we will search the right subtree
+    else if(x>root->key) 
         return search(root->right, x);
-    else //x is smaller than the data, so we will search the left subtree
+    else 
         return search(root->left,x);
 }
 
@@ -204,9 +200,6 @@ int main() {
     int n, i;
     n = 20000;
     int itter = 0;
-    //data(n);
-
-
 
     while(itter<15){
         
@@ -218,7 +211,6 @@ int main() {
           srand(time(0));
           clock_t start = clock();
           for (i=0; i<n; i++) {
-              //int id = 1000000 + i;
               int a;
               a = rand()%1000;
               int id = 1000000 +itter*5000 + a;
@@ -227,7 +219,6 @@ int main() {
           }
 
           clock_t end = clock();
-          //float t;
           t += (end-start)*1000/CLOCKS_PER_SEC;
           //printf("\n%f %d   ", t, n);
 
@@ -237,7 +228,6 @@ int main() {
           }
 
           clock_t end2 = clock();
-          //float t2;
           t2 += (end2-start2)*1000/CLOCKS_PER_SEC;
           //printf("%f %d\n", t2, n);
 
@@ -246,15 +236,11 @@ int main() {
           // srand(time(0));
           // clock_t start3 = clock();
           // for (i=0; i<n*500; i++){
-          //     //int chosen = rand()%n+1;
-          //     //root = deleteNode(root, listed[i]);
-          //     //printf("%d  ", listed[chosen]);
           //     root = search(root, listed[i%n]);
 
           // }
 
           // clock_t end3 = clock();
-          // float t;
           // t3 += (end3-start3)*1000/CLOCKS_PER_SEC;
           // // printf("\n\n%f %d\n", t, n);
         }

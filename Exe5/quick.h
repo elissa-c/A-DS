@@ -1,31 +1,51 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void swapq(int arr[], int indexes[], int a, int b) {
-	int t = arr[a];
-	arr[a] = arr[b];
-	arr[b] = t;
-    int z = indexes[a];
-    indexes[a] = indexes[b];
-    indexes[b] = z;
+void swap(int a, int b, int x, int y) {
+	int t = a;
+	a = b;
+	b = t;
+
+    t = y;
+    y = x;
+    x = t;
 }
 
-void QuickSort(int arr[], int indexes[], int low, int high)
+int partition(int arr[],int indexes[], int start, int end)
 {
-    if(high <= low) return;
-	int i = low - 1, j = high + 1, 
-	pivot = arr[(low + high) / 2];
-	
-	while(i <= j){
-		while (pivot > arr[++i]);
-		while(pivot < arr[--j]);
-		if(i < j)
-			swapq(arr, indexes, i, j);
+    int pivot = arr[start];
+    int count = 0;
+    for (int i = start + 1; i <= end; i++) {
+        if (arr[i] <= pivot)
+            count++;
+    }
+    int pivotIndex = start + count;
+    swap(arr[pivotIndex], arr[start], indexes[pivotIndex], indexes[start]);
+    int i = start, j = end;
 
-	}
+    while (i < pivotIndex && j > pivotIndex) {
 
-	if(j > low)
-	    QuickSort(arr, indexes, low, j);
-	if(i < high)
-	    QuickSort(arr, indexes, i, high);
+        while (arr[i] <= pivot) {
+            i++;
+        }
+
+        while (arr[j] > pivot) {
+            j--;
+        }
+
+        if (i < pivotIndex && j > pivotIndex) {
+            swap(arr[i++], arr[j--], indexes[i++], indexes[j--]);
+        }
+    }
+
+    return pivotIndex;
+}
+
+void QuickSort(int arr[], int indexes[], int start, int end)
+{
+    if (start >= end)
+        return ;
+    int p = partition(arr, indexes, start, end);
+    QuickSort(arr, indexes, start, p - 1);
+    QuickSort(arr,indexes, p + 1, end);
 }

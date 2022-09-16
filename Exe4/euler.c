@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include "AdjecList.h"
-//#include "create_graph.h"
 
 
 void traverse(int u, bool visited[]) {
@@ -129,13 +128,13 @@ int dfsCount(int v, int8_t *visited)
 
 
 int main() {
-    LARGE_INTEGER frequency, start, end;
+
     double interval;
     //int size = 10;
     int itter = 0;
     //float p[] = {(2/10), 0.3, 0.4, 0.6, 0.8, 0.95};
     //float p = 0.2;
-    int noReturns = 1;
+    int noReturns = 10;
     float t=0;
 
     while(itter<noReturns){
@@ -150,7 +149,7 @@ int main() {
                             addALEdge(j, i);
                             //printf("%d  ", i);
                     }
-            }
+            } 
         }
 
     clock_t start = clock();

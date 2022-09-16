@@ -5,8 +5,8 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define size 20
-#define prob 0.2
+#define size 100
+#define prob 0.4
 #define iterations 1000
 
 int mat[size][size];

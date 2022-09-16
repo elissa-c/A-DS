@@ -31,7 +31,7 @@ void create_directed(int mat[size][size]){
 void insert_queue(int vertex)
 {
         if (rear == MAX-1)
-                printf("\nQueue Overflow\n");
+                printf("Too much in a queue\n");
         else
         {
                 if (front == -1)  // empty queue
@@ -54,7 +54,6 @@ int delete_queue()
         int del_item;
         if (front == -1 || front > rear)
         {
-                //printf("\nQueue Underflow\n");
                 exit(1);
         }
         else
