@@ -14,37 +14,36 @@ int main() {
     static int toSort3[100000000];
 
     int i, num;
-    n = 100000;
+    n = 2000;
     int itter = 0;
 
     
 
-    while (itter<15) {
+    while (itter<16) {
 
         int a, z;
-        a = n-1;
-        int noRetries = 10;
-        //a = 0;
+        int noRetries =100;
         float t=0, t2=0, t3=0;
         for (z=0; z<noRetries; z++) {
+            a = n-1;
             for (i = 0; i<n; i++) {
                 
-                num = rand() % 1000;
-                // a--;
-                // num = a;
-                // a++;
-                // if (i<(n/2)-1) {
-                //     num = a;
-                //     a = a - 2;
-                // }
-                // else if (i >= (n/2)) {
-                //     num = a;
-                //     a = a+2;
-                // }
-                // else {
-                //     num = a;
-                //     a = a - 1;
-                // }
+                //num = rand() % 1000;
+                //a--;
+                //num = a;
+                //a++;
+                if (i<(n/2)-1) {
+                    num = a;
+                    a = a - 2;
+                }
+                else if (i >= (n/2)) {
+                    num = a;
+                    a = a+2;
+                }
+                else {
+                    num = a;
+                    a = a - 1;
+                }
 
                 
                 
@@ -81,7 +80,7 @@ int main() {
         printf("\n");
 
 
-        n *= 1.3;
+        n += 2000;
         itter++;
     }
 
