@@ -4,25 +4,24 @@
 #include <stdint.h>
 #include <time.h>
 #include <windows.h>
-//#include "AdjecList.h"
 
 
-typedef struct AdjacencyListItem
+typedef struct AdjListNode
 {
     int j;
-    struct AdjacencyListItem *next;
-} ALI;
+    struct AdjListNode *next;
+} AL;
 
-ALI **AdjacencyList;
+AL **AdjacencyList;
 int AdjacencyListCount;
 
 void addALEdge(int i, int j);
 
-void initAList(int n)
+void initAdjList(int n)
 {
     int i, j;
 
-    AdjacencyList = (ALI **)calloc(n, sizeof(ALI *));
+    AdjacencyList = (AL **)calloc(n, sizeof(AL *));
     AdjacencyListCount = n;
     for (int z=0; z<n; z++) {
         AdjacencyList[z] = 0;
@@ -34,7 +33,7 @@ void addALEdge(int i, int j)
     if (AdjacencyList == NULL)
         return;
 
-    ALI *newEdge = (ALI *)calloc(1, sizeof(ALI));
+    AL *newEdge = (AL *)calloc(1, sizeof(AL));
 
     newEdge->j = j;
 
@@ -44,7 +43,7 @@ void addALEdge(int i, int j)
         return;
     }
 
-    ALI *current = AdjacencyList[i];
+    AL *current = AdjacencyList[i];
 
     while (current->next != NULL)
     {
@@ -56,7 +55,7 @@ void addALEdge(int i, int j)
     return;
 }
 
-void freeAdjacencyList()
+void freeAdjList()
 {
     if (AdjacencyList == NULL)
         return;
@@ -65,7 +64,7 @@ void freeAdjacencyList()
 
     for (i = 0; i < AdjacencyListCount; i++)
     {
-        ALI *current = AdjacencyList[i], *prev;
+        AL *current = AdjacencyList[i], *prev;
 
         while (current != NULL)
         {
@@ -80,7 +79,7 @@ void freeAdjacencyList()
 
 uint8_t checkALEdge(int i, int j)
 {
-    ALI *current;
+    AL *current;
 
     current = AdjacencyList[i];
 
@@ -103,7 +102,7 @@ void removeALEdge(int i, int j)
     if (AdjacencyList[i] == NULL)
         return;
 
-    ALI *current = AdjacencyList[i], *prev;
+    AL *current = AdjacencyList[i], *prev;
 
     if (current->j == j)
     {
@@ -150,7 +149,7 @@ int8_t hamiltonianCycle()
         return 0;
     }
 
-    // printPath(path);
+    //printPath(path);
 
     free(path);
     return 1;
@@ -160,8 +159,6 @@ int8_t findHamiltonianCycle(int *path, int currentPos)
 {
     clock_t runtime = clock() - algoStart;
 
-    
-
     if (currentPos == AdjacencyListCount)
     {
         if (checkALEdge(path[currentPos - 1], path[0]))
@@ -170,7 +167,7 @@ int8_t findHamiltonianCycle(int *path, int currentPos)
             return 0;
     }
 
-    ALI *current = AdjacencyList[path[currentPos - 1]];
+    AL *current = AdjacencyList[path[currentPos - 1]];
 
     while (current != NULL)
     {
@@ -218,18 +215,36 @@ void printPath(int *path)
 
 
 
-void randomGraph(int n, float sat)
+void randomGraph(int n, float prob, int turn)
 {
-    //initAList(n);
+    initAdjList(n);
 
     char buffer[255];
-    int i, prob;
 
-    float random = (float)rand()/RAND_MAX;
-    if (random < prob) {
-        addALEdge(i, prob);
-        addALEdge(prob, i);    
+    sprintf(buffer, "./data_%0.1f_%d_%d.txt", prob, n, turn);
+    FILE *outputFile = fopen(buffer, "r");
+
+    if (outputFile == NULL)
+    {
+        printf("no file");
+        exit(1);
     }
+
+    int i, j;
+
+    while (1)
+    {
+        fgets(buffer, 255, outputFile);
+
+        sscanf(buffer, "%d -> %d", &i, &j);
+
+        if (i == -1 || j == -1)
+            break;
+
+        addALEdge(i, j);
+        addALEdge(j, i);
+    }
+
     
 }
 
@@ -239,49 +254,43 @@ int main()
 {
 
     
-    int i, jp, jn = 6, noReturns = 10, avgFrom = 5, k;
+    int noReturns = 3, z =3;
     float prob[] = {0.2, 0.3, 0.4, 0.6, 0.8, 0.95};
-
-    int *ns;
-    double *times[jn];
-    ns = (int *)calloc(noReturns, sizeof(int));
-
-    for (jp = 0; jp < jn; jp++)
+    
+    while (z<=5)
     {
-        times[jp] = (double *)calloc(noReturns, sizeof(double));
-
-        printf("\nHC for p=%f\n", prob[jp]);
-        for (i = 1; i <= noReturns; i++)
+        printf("\nHC for p=%f\n", prob[z]);
+        int n = 20, itter = 0;
+        while (itter<10)
         {
-            int n = 25 * i;
-            ns[i - 1] = n;
-            times[jp][i - 1] = 0;
-            for(k = 0; k < avgFrom; k++)
+            double time = 0;
+            int i = 0;
+            while (i < noReturns)
             {
-                int i, j;
+                int a;
 
-                AdjacencyList = (ALI **)calloc(n, sizeof(ALI *));
-                AdjacencyListCount = n;
-                for (int z=0; z<n; z++) {
-                    AdjacencyList[z] = 0;
-                }
-                randomGraph(n, prob[jp]);
+                randomGraph(n, prob[z], i);
 
 
-
-                clock_t begin = clock();
-                hamiltonianCycle();
+                clock_t start = clock();
+                a = hamiltonianCycle();
                 clock_t end = clock();
 
-                times[jp][i - 1] += (double)(end - begin) / CLOCKS_PER_SEC * 1000;
 
-                freeAdjacencyList();
+                time += (end - start)*1000 / CLOCKS_PER_SEC;
+                i++;
+
+                freeAdjList();
             }
             
-            times[jp][i - 1] /= avgFrom;
 
-            printf("%d - %fms\n", n, times[jp][i - 1]);
+            printf("%f\n", time/noReturns);
+
+            n +=20;
+            itter++;
         }
+        z++;
+        itter = 0;
     }
 
 }

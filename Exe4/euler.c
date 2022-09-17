@@ -71,8 +71,6 @@ void findEulerCycle(int start)
 
         if (target != -1 && isValidEdge(start, target))
         {
-            //printf("%d -> %d, ", start, target);
-
             removeUDEdge(start, target);
             findEulerCycle(target);
         }
@@ -129,11 +127,7 @@ int dfsCount(int v, int8_t *visited)
 
 int main() {
 
-    double interval;
-    //int size = 10;
     int itter = 0;
-    //float p[] = {(2/10), 0.3, 0.4, 0.6, 0.8, 0.95};
-    //float p = 0.2;
     int noReturns = 10;
     float t=0;
 
